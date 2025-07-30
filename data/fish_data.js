@@ -22,7 +22,6 @@ module.exports = {
 };
 
 // File: commands/fish.js
-const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
   data: new SlashCommandBuilder()
