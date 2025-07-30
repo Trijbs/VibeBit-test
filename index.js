@@ -37,7 +37,7 @@ client.once('ready', () => {
   const statuses = [
     { name: '⛔️ Testing Shit', type: 0 },
     { name: '🧠 Enhancing', type: 0 },
-    { name: '📊 Checking leaderboard', type: 3 },
+    { name: '📊 leaderboard', type: 3 },
     { name: '⚡ Use /fish or /trivia', type: 0 }
   ];
 

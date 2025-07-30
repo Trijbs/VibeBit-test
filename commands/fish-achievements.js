@@ -11,7 +11,7 @@ module.exports = {
     const userId = interaction.user.id;
     const guildId = interaction.guildId;
 
-    await interaction.deferReply({ flags: 64 });
+    await interaction.deferReply({ flags: 1 << 6 });
 
     const userData = getUserData(guildId, userId);
 

@@ -39,7 +39,7 @@ module.exports = {
     .setName('fish')
     .setDescription('Catch a fish and earn XP!'),
   async execute(interaction) {
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: 1 << 6 });
 
     const fishData = loadData();
     const xpData = loadXPData();
@@ -61,7 +61,7 @@ module.exports = {
         userData.lastCaught = null;
         fishData[interaction.guild.id][interaction.user.id] = userData;
         saveData(fishData);
-        await interaction.editReply('😞 You didn’t catch anything this time.');
+        await interaction.editReply({ content: '😞 You didn’t catch anything this time.' });
         return;
       }
 
@@ -111,10 +111,10 @@ module.exports = {
       if (unlocked.length) reply += `\n\n🎉 You unlocked:\n${unlocked.join('\n')}`;
 
       // Edit the original reply to avoid duplicate/conflicting replies
-      await interaction.editReply(reply);
+      await interaction.editReply({ content: reply });
     } catch (err) {
       try {
-        await interaction.editReply('❌ An error occurred while fishing.');
+        await interaction.editReply({ content: '❌ An error occurred while fishing.' });
       } catch (err2) {
         console.warn('Failed to edit reply:', err2.message);
       }

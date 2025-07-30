@@ -21,6 +21,8 @@ const command = {
     .setDescription('🎣 Shows the top fishing players based on XP.'),
 
   async execute(interaction) {
+    await interaction.deferReply({ flags: 1 << 6 });
+
     const dataPath = path.join(__dirname, '../data/fish_xp.json');
 
     let fishData = {};
@@ -29,11 +31,7 @@ const command = {
     } catch (err) {
       console.error('❌ Failed to read fish XP data:', err);
       const embed = { content: '⚠️ Failed to load leaderboard data.', flags: 64 };
-      if (interaction.deferred || interaction.replied) {
-        await interaction.editReply(embed);
-      } else {
-        await interaction.reply(embed);
-      }
+      await interaction.editReply(embed);
       return;
     }
 
@@ -46,18 +44,14 @@ const command = {
 
     if (sorted.length === 0) {
       const embed = { content: '📭 No fishing data available yet.', flags: 64 };
-      if (interaction.deferred || interaction.replied) {
-        await interaction.editReply(embed);
-      } else {
-        await interaction.reply(embed);
-      }
+      await interaction.editReply(embed);
       return;
     }
 
     const leaderboard = sorted
-      .map(([userId]) => {
+      .map(([userId], index) => {
         const userEntry = ensureUserEntry(fishData, guildId, userId);
-        return `**${sorted.indexOf([userId, userEntry]) + 1}.** <@${userId}> — ${userEntry.xp} XP`;
+        return `**${index + 1}.** <@${userId}> — ${userEntry.xp} XP`;
       })
       .join('\n');
 
@@ -66,11 +60,7 @@ const command = {
       allowedMentions: { users: [] },
       flags: 64
     };
-    if (interaction.deferred || interaction.replied) {
-      await interaction.editReply(embed);
-    } else {
-      await interaction.reply(embed);
-    }
+    await interaction.editReply(embed);
   }
 };
 

@@ -4,6 +4,7 @@ const {
   ButtonBuilder,
   ButtonStyle,
   ComponentType,
+  InteractionFlags,
 } = require('discord.js');
 const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 const { updateLeaderboard } = require('../lib/db.js');
@@ -95,7 +96,7 @@ const data = new SlashCommandBuilder()
   .setDescription('Play a trivia game with category and difficulty selection.');
 
 async function execute(interaction) {
-  await interaction.deferReply({ ephemeral: true });
+  await interaction.deferReply({ flags: InteractionFlags.Ephemeral });
 
   const categoryRow = new ActionRowBuilder().addComponents(
     new ButtonBuilder().setCustomId('scientific').setLabel('Scientific').setStyle(ButtonStyle.Primary),
@@ -126,14 +127,14 @@ async function execute(interaction) {
   });
 
   collector.on('collect', async i => {
-    if (i.user.id !== interaction.user.id) return i.reply({ content: 'This menu is not for you.', flags: 64 });
+    if (i.user.id !== interaction.user.id) return i.reply({ content: 'This menu is not for you.', flags: InteractionFlags.Ephemeral });
 
     if (!selectedCategory && ['scientific', 'history', 'genz', 'boomer', 'trending'].includes(i.customId)) {
       selectedCategory = i.customId;
-      await i.reply({ content: `📚 Category selected: **${selectedCategory}**`, flags: 64 });
+      await i.reply({ content: `📚 Category selected: **${selectedCategory}**`, flags: InteractionFlags.Ephemeral });
     } else if (!selectedDifficulty && ['easy', 'medium', 'hard'].includes(i.customId)) {
       selectedDifficulty = i.customId;
-      await i.reply({ content: `🎚️ Difficulty selected: **${selectedDifficulty}**`, flags: 64 });
+      await i.reply({ content: `🎚️ Difficulty selected: **${selectedDifficulty}**`, flags: InteractionFlags.Ephemeral });
     }
 
     if (selectedCategory && selectedDifficulty) {
@@ -144,7 +145,7 @@ async function execute(interaction) {
   collector.on('end', async (collected, reason) => {
     if (reason !== 'both-selected') {
       try {
-        await interaction.followUp({ content: '⏰ Selection timed out. Please try again.' });
+        await interaction.followUp({ content: '⏰ Selection timed out. Please try again.', flags: InteractionFlags.Ephemeral });
       } catch (err) {
         console.error('FollowUp error after selection timeout:', err);
       }
@@ -158,7 +159,7 @@ async function execute(interaction) {
     if (opentdbCategory) {
       const url = `https://opentdb.com/api.php?amount=1&type=multiple&category=${opentdbCategory}&difficulty=${selectedDifficulty}`;
       try {
-        await interaction.followUp({ content: '📡 Fetching trivia question...' });
+        await interaction.followUp({ content: '📡 Fetching trivia question...', flags: InteractionFlags.Ephemeral });
       } catch (err) {
         console.error('FollowUp error while fetching question:', err);
       }
@@ -203,7 +204,7 @@ async function execute(interaction) {
       });
 
       answerCollector.on('collect', async btn => {
-        if (btn.user.id !== interaction.user.id) return btn.reply({ content: 'Not your question!', flags: 64 });
+        if (btn.user.id !== interaction.user.id) return btn.reply({ content: 'Not your question!', flags: InteractionFlags.Ephemeral });
         answerCollector.stop();
         if (!triviaData[btn.user.id]) {
           triviaData[btn.user.id] = { correct: 0, incorrect: 0 };
@@ -229,16 +230,16 @@ async function execute(interaction) {
         }
         if (btn.customId === `answer_${correctIndex}`) {
           updateLeaderboard(btn.user);
-          await btn.reply('✅ Correct! +1 point added.');
+          await btn.reply({ content: '✅ Correct! +1 point added.', flags: InteractionFlags.Ephemeral });
         } else {
-          await btn.reply(`❌ Wrong! Correct answer was **${String.fromCharCode(65 + correctIndex)}**`);
+          await btn.reply({ content: `❌ Wrong! Correct answer was **${String.fromCharCode(65 + correctIndex)}**`, flags: InteractionFlags.Ephemeral });
         }
       });
 
       answerCollector.on('end', async (_, reason) => {
         if (reason === 'time') {
           try {
-            await interaction.followUp('⏰ Time ran out for answering!');
+            await interaction.followUp({ content: '⏰ Time ran out for answering!', flags: InteractionFlags.Ephemeral });
           } catch (err) {
             console.error('FollowUp error on answer timeout:', err);
           }
@@ -246,7 +247,7 @@ async function execute(interaction) {
       });
     } else {
       try {
-        await interaction.followUp(`❗ The category **${selectedCategory}** is not yet supported.`);
+        await interaction.followUp({ content: `❗ The category **${selectedCategory}** is not yet supported.`, flags: InteractionFlags.Ephemeral });
       } catch (err) {
         console.error('FollowUp error on unsupported category:', err);
       }
