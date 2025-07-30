@@ -1,0 +1,29 @@
+{
+  "885947418292650005": {
+    "username": "_tribs_",
+    "xp": 869,
+    "level": 8,
+    "totalCaught": 25,
+    "lastFished": 1753873162097,
+    "lastFishedDate": "2025-07-30",
+    "streak": 1,
+    "achievements": [
+      "First Catch",
+      "Century Fisher",
+      "High Attractiveness"
+    ],
+    "lastFishEmoji": "🐡",
+    "lastFishName": "Pufferfish"
+  },
+  "1390512546858926163": {
+    "885947418292650005": {
+      "xp": 20,
+      "streak": 3,
+      "inventory": [],
+      "achievements": [],
+      "lastFish": 1753887573618,
+      "lastCaught": "👟 Trash Shoe",
+      "username": "_tribs_"
+    }
+  }
+}
