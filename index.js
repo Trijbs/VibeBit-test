@@ -35,8 +35,8 @@ client.once('ready', () => {
   console.log(`✅ Logged in as ${client.user.tag}`);
 
   const statuses = [
-    { name: '🎣 Catching fish', type: 0 },
-    { name: '🧠 Playing trivia', type: 0 },
+    { name: '⛔️ Testing Shit', type: 0 },
+    { name: '🧠 Enhancing', type: 0 },
     { name: '📊 Checking leaderboard', type: 3 },
     { name: '⚡ Use /fish or /trivia', type: 0 }
   ];
