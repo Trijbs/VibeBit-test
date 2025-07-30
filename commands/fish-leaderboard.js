@@ -39,7 +39,7 @@ const command = {
       .slice(0, 10);
 
     if (sorted.length === 0) {
-      return interaction.reply('📭 No fishing data available yet.');
+      return interaction.editReply('📭 No fishing data available yet.');
     }
 
     const leaderboard = sorted
@@ -49,7 +49,7 @@ const command = {
       })
       .join('\n');
 
-    await interaction.reply({
+    await interaction.editReply({
       content: `🎣 **Top Fishing Leaderboard**\n\n${leaderboard}`,
       allowedMentions: { users: [] }
     });

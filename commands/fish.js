@@ -48,7 +48,7 @@ module.exports = {
       return interaction.reply({ content: `⏳ Wait ${timeLeft}s before fishing again.`, ephemeral: true });
     }
 
-    await interaction.reply('🎣 Casting your line...');
+    await interaction.reply({ content: '🎣 Casting your line...', fetchReply: true });
     await new Promise(resolve => setTimeout(resolve, 5000));
 
     const noCatchChance = Math.random();
@@ -106,8 +106,8 @@ module.exports = {
     if (bonus > 0) reply += ` (+${bonus} bonus XP)`;
     if (unlocked.length) reply += `\n\n🎉 You unlocked:\n${unlocked.join('\n')}`;
 
-    // Ensure reply is finished, avoid duplicate/conflicting replies
-    setTimeout(() => interaction.followUp(reply), 100);
+    // Edit the original reply to avoid duplicate/conflicting replies
+    await interaction.editReply(reply);
   }
 };
 

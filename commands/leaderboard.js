@@ -26,12 +26,14 @@ module.exports = {
           : 'The leaderboard is currently empty.',
         flags: 0 // avoid deprecated `ephemeral` warning
       });
+      return;
     } catch (error) {
       console.error('Error reading leaderboard:', error);
       await interaction.reply({
         content: '⚠️ Failed to load the leaderboard.',
         flags: 0
       });
+      return;
     }
   }
 };
