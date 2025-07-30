@@ -14,20 +14,32 @@ module.exports = {
 
     if (!userData) {
       await interaction.deferReply({ flags: 64 });
-      await interaction.editReply("You haven't caught any fish yet!");
+      if (interaction.deferred || interaction.replied) {
+        await interaction.followUp({ content: "You haven't caught any fish yet!", flags: 64 });
+      } else {
+        await interaction.reply({ content: "You haven't caught any fish yet!", flags: 64 });
+      }
       return;
     }
 
     const achievements = userData.achievements || [];
     if (achievements.length === 0) {
       await interaction.deferReply({ flags: 64 });
-      await interaction.editReply("You don't have any achievements yet!");
+      if (interaction.deferred || interaction.replied) {
+        await interaction.followUp({ content: "You don't have any achievements yet!", flags: 64 });
+      } else {
+        await interaction.reply({ content: "You don't have any achievements yet!", flags: 64 });
+      }
       return;
     }
 
     const achievementList = achievements.map(a => `🏆 ${a}`).join('\n');
 
     await interaction.deferReply({ flags: 64 });
-    await interaction.editReply(`Here are your achievements:\n${achievementList}`);
+    if (interaction.deferred || interaction.replied) {
+      await interaction.followUp({ content: `Here are your achievements:\n${achievementList}`, flags: 64 });
+    } else {
+      await interaction.reply({ content: `Here are your achievements:\n${achievementList}`, flags: 64 });
+    }
   }
 };

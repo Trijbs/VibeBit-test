@@ -28,7 +28,13 @@ const command = {
       fishData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
     } catch (err) {
       console.error('❌ Failed to read fish XP data:', err);
-      return interaction.reply({ content: '⚠️ Failed to load leaderboard data.', flags: 64 });
+      const embed = { content: '⚠️ Failed to load leaderboard data.', flags: 64 };
+      if (interaction.deferred || interaction.replied) {
+        await interaction.editReply(embed);
+      } else {
+        await interaction.reply(embed);
+      }
+      return;
     }
 
     const guildId = interaction.guildId;
@@ -39,7 +45,13 @@ const command = {
       .slice(0, 10);
 
     if (sorted.length === 0) {
-      return interaction.reply({ content: '📭 No fishing data available yet.', flags: 64 });
+      const embed = { content: '📭 No fishing data available yet.', flags: 64 };
+      if (interaction.deferred || interaction.replied) {
+        await interaction.editReply(embed);
+      } else {
+        await interaction.reply(embed);
+      }
+      return;
     }
 
     const leaderboard = sorted
@@ -49,10 +61,15 @@ const command = {
       })
       .join('\n');
 
-    await interaction.editReply({
+    const embed = {
       content: `🎣 **Top Fishing Leaderboard**\n\n${leaderboard}`,
       allowedMentions: { users: [] }
-    });
+    };
+    if (interaction.deferred || interaction.replied) {
+      await interaction.editReply(embed);
+    } else {
+      await interaction.reply(embed);
+    }
   }
 };
 

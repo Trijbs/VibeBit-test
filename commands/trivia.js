@@ -95,6 +95,8 @@ const data = new SlashCommandBuilder()
   .setDescription('Play a trivia game with category and difficulty selection.');
 
 async function execute(interaction) {
+  await interaction.deferReply({ ephemeral: true });
+
   const categoryRow = new ActionRowBuilder().addComponents(
     new ButtonBuilder().setCustomId('scientific').setLabel('Scientific').setStyle(ButtonStyle.Primary),
     new ButtonBuilder().setCustomId('history').setLabel('History').setStyle(ButtonStyle.Primary),
@@ -109,7 +111,7 @@ async function execute(interaction) {
     new ButtonBuilder().setCustomId('hard').setLabel('Hard').setStyle(ButtonStyle.Success),
   );
 
-  await interaction.reply({
+  await interaction.editReply({
     content: '🎯 Choose a category and difficulty to start!',
     components: [categoryRow, difficultyRow],
   });
