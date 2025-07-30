@@ -39,6 +39,8 @@ module.exports = {
     .setName('fish')
     .setDescription('Catch a fish and earn XP!'),
   async execute(interaction) {
+    await interaction.deferReply({ ephemeral: true });
+
     const fishData = loadData();
     const xpData = loadXPData();
     const userData = getOrInitUserData(interaction.guild.id, interaction.user.id, fishData);
@@ -46,11 +48,10 @@ module.exports = {
     try {
       if (userData.lastFish && now - userData.lastFish < 10000) {
         const timeLeft = ((10000 - (now - userData.lastFish)) / 1000).toFixed(1);
-        await interaction.reply({ content: `⏳ Wait ${timeLeft}s before fishing again.`, flags: 64 });
+        await interaction.editReply({ content: `⏳ Wait ${timeLeft}s before fishing again.` });
         return;
       }
 
-      await interaction.deferReply({ flags: 64 });
       await new Promise(resolve => setTimeout(resolve, 5000));
 
       const noCatchChance = Math.random();
