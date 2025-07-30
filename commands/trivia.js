@@ -124,14 +124,14 @@ async function execute(interaction) {
   });
 
   collector.on('collect', async i => {
-    if (i.user.id !== interaction.user.id) return i.reply({ content: 'This menu is not for you.', ephemeral: true });
+    if (i.user.id !== interaction.user.id) return i.reply({ content: 'This menu is not for you.', flags: 64 });
 
     if (!selectedCategory && ['scientific', 'history', 'genz', 'boomer', 'trending'].includes(i.customId)) {
       selectedCategory = i.customId;
-      await i.reply({ content: `📚 Category selected: **${selectedCategory}**`, ephemeral: true });
+      await i.reply({ content: `📚 Category selected: **${selectedCategory}**`, flags: 64 });
     } else if (!selectedDifficulty && ['easy', 'medium', 'hard'].includes(i.customId)) {
       selectedDifficulty = i.customId;
-      await i.reply({ content: `🎚️ Difficulty selected: **${selectedDifficulty}**`, ephemeral: true });
+      await i.reply({ content: `🎚️ Difficulty selected: **${selectedDifficulty}**`, flags: 64 });
     }
 
     if (selectedCategory && selectedDifficulty) {
@@ -192,7 +192,7 @@ async function execute(interaction) {
       });
 
       answerCollector.on('collect', async btn => {
-        if (btn.user.id !== interaction.user.id) return btn.reply({ content: 'Not your question!', ephemeral: true });
+        if (btn.user.id !== interaction.user.id) return btn.reply({ content: 'Not your question!', flags: 64 });
         answerCollector.stop();
         if (!triviaData[btn.user.id]) {
           triviaData[btn.user.id] = { correct: 0, incorrect: 0 };

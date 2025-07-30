@@ -45,7 +45,7 @@ module.exports = {
     const now = Date.now();
     if (userData.lastFish && now - userData.lastFish < 10000) {
       const timeLeft = ((10000 - (now - userData.lastFish)) / 1000).toFixed(1);
-      await interaction.reply({ content: `⏳ Wait ${timeLeft}s before fishing again.`, ephemeral: true });
+      await interaction.reply({ content: `⏳ Wait ${timeLeft}s before fishing again.`, flags: 64 });
       return;
     }
 

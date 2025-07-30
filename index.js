@@ -59,7 +59,7 @@ client.on('interactionCreate', async interaction => {
 
   try {
     // Defer the reply to prevent "Unknown interaction" error if it takes time
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: 64 });
 
     await command.execute(interaction);
   } catch (error) {
@@ -67,7 +67,7 @@ client.on('interactionCreate', async interaction => {
 
     // Prevent double replies
     if (!interaction.replied && !interaction.deferred) {
-      await interaction.reply({ content: '❌ There was an error executing this command.', ephemeral: true });
+      await interaction.reply({ content: '❌ There was an error executing this command.', flags: 64 });
     } else if (interaction.deferred && !interaction.replied) {
       await interaction.editReply({ content: '❌ There was an error executing this command.' });
     } else {
