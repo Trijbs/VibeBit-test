@@ -45,10 +45,11 @@ module.exports = {
     const now = Date.now();
     if (userData.lastFish && now - userData.lastFish < 10000) {
       const timeLeft = ((10000 - (now - userData.lastFish)) / 1000).toFixed(1);
-      return interaction.reply({ content: `⏳ Wait ${timeLeft}s before fishing again.`, ephemeral: true });
+      await interaction.reply({ content: `⏳ Wait ${timeLeft}s before fishing again.`, ephemeral: true });
+      return;
     }
 
-    await interaction.reply({ content: '🎣 Casting your line...', fetchReply: true });
+    await interaction.deferReply();
     await new Promise(resolve => setTimeout(resolve, 5000));
 
     const noCatchChance = Math.random();
@@ -58,7 +59,8 @@ module.exports = {
       userData.lastCaught = null;
       fishData[interaction.guild.id][interaction.user.id] = userData;
       saveData(fishData);
-      return interaction.followUp('😞 You didn’t catch anything this time.');
+      await interaction.editReply('😞 You didn’t catch anything this time.');
+      return;
     }
 
     const chance = Math.random() * 100;

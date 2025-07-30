@@ -16,7 +16,7 @@ module.exports = {
     } catch (error) {
       console.error('Error executing /roll command:', error);
       if (interaction && interaction.reply) {
-        await interaction.reply({ content: '❌ Something went wrong while rolling the dice.', ephemeral: true });
+        await interaction.reply({ content: '❌ Something went wrong while rolling the dice.', flags: 64 });
       }
     }
   },

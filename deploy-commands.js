@@ -1,63 +1,43 @@
-require('dotenv').config();
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs');
+const path = require('node:path');
 const { REST, Routes } = require('discord.js');
-const { SlashCommandBuilder } = require('@discordjs/builders');
-const token = process.env.DISCORD_TOKEN;
-const clientId = process.env.CLIENT_ID;
-const guildId = process.env.GUILD_ID;
+require('dotenv').config();
 
 const commands = [];
-
-// Read commands from ./commands/
-const commandFiles = fs.readdirSync(path.join(__dirname, 'commands')).filter(file => file.endsWith('.js'));
+const commandsPath = path.join(__dirname, 'commands');
+const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 
 for (const file of commandFiles) {
-  try {
-    const commandPath = path.join(__dirname, 'commands', file);
-    const commandModule = require(commandPath);
-    if (!commandModule) {
-      console.warn(`⚠️ Skipping ${file}: module.exports is undefined or null`);
-      continue;
-    }
+  const filePath = path.join(commandsPath, file);
+  const command = require(filePath);
 
-    if (Array.isArray(commandModule.data) && commandModule.data.length > 0) {
-      commandModule.data.forEach((cmd, index) => {
-        if (cmd?.name && cmd?.description) {
-          commands.push(new SlashCommandBuilder()
-            .setName(cmd.name)
-            .setDescription(cmd.description)
-            .toJSON());
-          console.log(`✅ Registered [${cmd.name}] from ${file}[${index}]`);
-        } else {
-          console.warn(`⚠️ Invalid command in ${file}[${index}]: Missing name or description`);
-        }
-      });
-    } else if (!commandModule.data) {
-      console.warn(`⚠️ Skipping ${file}: "data" is missing or undefined`);
-    } else if (commandModule.data && commandModule.data.name && commandModule.data.description) {
-      commands.push(new SlashCommandBuilder()
-        .setName(commandModule.data.name)
-        .setDescription(commandModule.data.description)
-        .toJSON());
-      console.log(`✅ Registered [${commandModule.data.name}] from ${file}`);
-    } else {
-      console.warn(`⚠️ The command at ${file} is missing "data.name" or "data.description".`);
+  if (
+    command &&
+    typeof command === 'object' &&
+    'data' in command &&
+    'execute' in command &&
+    command.data?.name &&
+    command.data?.description
+  ) {
+    try {
+      commands.push(command.data.toJSON());
+      console.log(`✅ Registered [${command.data.name}] from ${file}`);
+    } catch (err) {
+      console.error(`❌ Failed to register command from ${file}:`, err);
     }
-
-  } catch (err) {
-    console.error(`❌ Failed to load command at ${file}: ${err.message}`);
+  } else {
+    console.warn(`⚠️ Skipping invalid command in ${file}: missing "data" or "execute" export`);
   }
 }
 
-const rest = new REST({ version: '10' }).setToken(token);
+const rest = new REST().setToken(process.env.DISCORD_TOKEN);
 
 (async () => {
   try {
     console.log('⏳ Registering slash commands...');
     await rest.put(
-      Routes.applicationGuildCommands(clientId, guildId),
-      { body: commands }
+      Routes.applicationCommands(process.env.CLIENT_ID),
+      { body: commands },
     );
     console.log('✅ Slash commands registered.');
   } catch (error) {

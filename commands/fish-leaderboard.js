@@ -28,7 +28,7 @@ const command = {
       fishData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
     } catch (err) {
       console.error('❌ Failed to read fish XP data:', err);
-      return interaction.reply({ content: '⚠️ Failed to load leaderboard data.', ephemeral: true });
+      return interaction.reply({ content: '⚠️ Failed to load leaderboard data.', flags: 64 });
     }
 
     const guildId = interaction.guildId;
@@ -39,7 +39,7 @@ const command = {
       .slice(0, 10);
 
     if (sorted.length === 0) {
-      return interaction.editReply('📭 No fishing data available yet.');
+      return interaction.reply({ content: '📭 No fishing data available yet.', flags: 64 });
     }
 
     const leaderboard = sorted

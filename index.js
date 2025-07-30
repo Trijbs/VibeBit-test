@@ -65,11 +65,13 @@ client.on('interactionCreate', async interaction => {
   } catch (error) {
     console.error(error);
 
-    // Try to safely edit the deferred reply, fallback if not possible
-    if (interaction.deferred || interaction.replied) {
+    // Prevent double replies
+    if (!interaction.replied && !interaction.deferred) {
+      await interaction.reply({ content: '❌ There was an error executing this command.', ephemeral: true });
+    } else if (interaction.deferred && !interaction.replied) {
       await interaction.editReply({ content: '❌ There was an error executing this command.' });
     } else {
-      await interaction.reply({ content: '❌ There was an error executing this command.', ephemeral: true });
+      console.warn('⚠️ Interaction was already replied to. Skipping error response.');
     }
   }
 });

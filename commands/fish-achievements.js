@@ -13,13 +13,13 @@ module.exports = {
     const userData = getUserData(guildId, userId);
 
     if (!userData) {
-      await interaction.reply({ content: "You haven't caught any fish yet!", ephemeral: true });
+      await interaction.reply({ content: "You haven't caught any fish yet!", flags: 64 });
       return;
     }
 
     const achievements = userData.achievements || [];
     if (achievements.length === 0) {
-      await interaction.reply({ content: "You don't have any achievements yet!", ephemeral: true });
+      await interaction.reply({ content: "You don't have any achievements yet!", flags: 64 });
       return;
     }
 
@@ -27,7 +27,7 @@ module.exports = {
 
     await interaction.reply({
       content: `Here are your achievements:\n${achievementList}`,
-      ephemeral: true
+      flags: 64
     });
   }
 };

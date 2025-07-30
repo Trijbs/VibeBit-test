@@ -5,7 +5,7 @@ const {
   ButtonStyle,
   ComponentType,
 } = require('discord.js');
-const fetch = require('node-fetch');
+const fetch = (...args) => import('node-fetch').then(({ default: fetch }) => fetch(...args));
 const { updateLeaderboard } = require('../lib/db.js');
 const triviaData = require('../data/trivia_data.js');
 const fs = require('fs');
