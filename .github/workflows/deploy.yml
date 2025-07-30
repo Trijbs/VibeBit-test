@@ -1,27 +1,29 @@
-name: Node.js Bot Deploy
+name: Deploy Bot
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  build-and-run:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: 📥 Checkout repo
         uses: actions/checkout@v3
 
-      - name: Setup Node
+      - name: 🟢 Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: '18'
 
-      - name: Install dependencies
+      - name: 📦 Install dependencies
         run: npm install
 
-      - name: Run bot
+      - name: 🚀 Run bot
+        run: node index.js
         env:
           DISCORD_TOKEN: ${{ secrets.DISCORD_TOKEN }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
           GUILD_ID: ${{ secrets.GUILD_ID }}
-        run: node index.js
