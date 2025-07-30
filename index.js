@@ -1,6 +1,6 @@
 require('dotenv').config();
 const fs = require('fs');
-const { Client, GatewayIntentBits, Collection } = require('discord.js');
+const { Client, GatewayIntentBits, Collection, InteractionType, InteractionFlagsBits } = require('discord.js');
 const token = process.env.DISCORD_TOKEN;
 
 const client = new Client({
@@ -59,25 +59,24 @@ client.on('interactionCreate', async interaction => {
 
   try {
     // Defer reply to prevent early timeout or unknown interaction errors
-    await interaction.deferReply({ ephemeral: true });
+    await interaction.deferReply({ flags: InteractionFlagsBits.Ephemeral });
+
+    if (interaction.replied || interaction.deferred) return;
 
     await command.execute(interaction);
   } catch (error) {
     console.error(`Error handling /${interaction.commandName} command:`, error);
     try {
-      if (interaction.deferred || interaction.replied) {
-        await interaction.followUp({
-          content: '❌ There was an error executing this command.',
-          ephemeral: true
-        });
-      } else {
+      if (!interaction.replied && !interaction.deferred) {
         await interaction.reply({
           content: '❌ There was an error executing this command.',
-          ephemeral: true
+          flags: InteractionFlagsBits.Ephemeral
         });
+      } else {
+        console.error('❌ Failed to send error response: Interaction already acknowledged.');
       }
     } catch (err) {
-      console.error('❌ Failed to send error response:', err);
+      console.error('❌ Failed to send error response: Interaction already acknowledged.');
     }
   }
 });

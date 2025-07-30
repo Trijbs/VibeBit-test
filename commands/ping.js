@@ -4,15 +4,21 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('ping')
     .setDescription('Replies with Pong!'),
-  execute: async (interaction) => {
+  async execute(interaction) {
     try {
-      await interaction.deferReply({ ephemeral: true });
-      await interaction.editReply('🏓 Pong!');
+      await interaction.deferReply({ flags: 64 }); // ephemeral response
+      const sent = await interaction.editReply({ content: 'Pinging...' });
+      const pingTime = sent.createdTimestamp - interaction.createdTimestamp;
+      await interaction.editReply({ content: `🏓 Pong! (Roundtrip: ${pingTime}ms)` });
     } catch (error) {
-      console.error("Error handling /ping command:", error);
+      console.error('Error in /ping:', error);
       if (!interaction.replied) {
-        await interaction.editReply('❌ Er ging iets mis bij /ping.');
+        try {
+          await interaction.editReply({ content: '❌ Failed to respond to ping command.' });
+        } catch (err) {
+          console.error('Error editing reply in /ping fallback:', err);
+        }
       }
     }
-  }
+  },
 };
