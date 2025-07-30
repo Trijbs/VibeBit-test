@@ -38,6 +38,7 @@ for (const file of commandFiles) {
 (async () => {
   try {
     console.log('⏳ Registering slash commands...');
+    const rest = new REST().setToken(token);
     await rest.put(
       Routes.applicationCommands(process.env.CLIENT_ID),
       { body: commands },
