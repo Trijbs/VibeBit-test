@@ -34,7 +34,6 @@ for (const file of commandFiles) {
   }
 }
 
-const rest = new REST().setToken(process.env.DISCORD_TOKEN);
 
 (async () => {
   try {
