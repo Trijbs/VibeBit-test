@@ -1,38 +1,47 @@
-const fs = require('fs');
-const path = require('path');
-
-const dataFilePath = path.join(__dirname, 'fish_data.json');
-
-function ensureData() {
-  if (!fs.existsSync(dataFilePath)) {
-    fs.writeFileSync(dataFilePath, JSON.stringify({}));
-  }
-}
-
-function readData() {
-  ensureData();
-  const raw = fs.readFileSync(dataFilePath);
-  return JSON.parse(raw);
-}
-
-function writeData(data) {
-  fs.writeFileSync(dataFilePath, JSON.stringify(data, null, 2));
-}
-
-function getUserData(guildId, userId) {
-  const data = readData();
-  return data[guildId]?.[userId] || null;
-}
-
-function updateUserData(guildId, userId, update) {
-  const data = readData();
-  if (!data[guildId]) data[guildId] = {};
-  if (!data[guildId][userId]) data[guildId][userId] = {};
-  data[guildId][userId] = { ...data[guildId][userId], ...update };
-  writeData(data);
-}
+// File: commands/ping.js
+const { SlashCommandBuilder } = require('@discordjs/builders');
 
 module.exports = {
-  getUserData,
-  updateUserData,
+  data: new SlashCommandBuilder()
+    .setName('ping')
+    .setDescription('Replies with Pong!'),
+  async execute(interaction) {
+    try {
+      await interaction.deferReply({ ephemeral: true });
+      // Your logic here
+      await interaction.editReply('Pong!');
+    } catch (error) {
+      console.error(error);
+      if (interaction.deferred || interaction.replied) {
+        await interaction.editReply('There was an error while executing this command!');
+      } else {
+        await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+      }
+    }
+  },
+};
+
+// File: commands/fish.js
+const { SlashCommandBuilder } = require('@discordjs/builders');
+
+module.exports = {
+  data: new SlashCommandBuilder()
+    .setName('fish')
+    .setDescription('Go fishing!'),
+  async execute(interaction) {
+    try {
+      await interaction.deferReply({ ephemeral: true });
+      // Your fishing logic here
+
+      // Example reply after fishing logic
+      await interaction.editReply('You caught a fish!');
+    } catch (error) {
+      console.error(error);
+      if (interaction.deferred || interaction.replied) {
+        await interaction.editReply('There was an error while executing this command!');
+      } else {
+        await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+      }
+    }
+  },
 };
