@@ -4,15 +4,15 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName('ping')
     .setDescription('Replies with Pong!'),
-  async execute(interaction) {
+  execute: async (interaction) => {
     try {
-      await interaction.deferReply({ flags: 64 });
-      await interaction.editReply({ content: '🏓 Pong!' });
+      await interaction.deferReply({ ephemeral: true });
+      await interaction.editReply('🏓 Pong!');
     } catch (error) {
-      console.error('Error handling /ping command:', error);
+      console.error("Error handling /ping command:", error);
       if (!interaction.replied) {
-        await interaction.followUp({ content: '❌ Something went wrong while processing your command.', flags: 64 });
+        await interaction.editReply('❌ Er ging iets mis bij /ping.');
       }
     }
-  },
+  }
 };
