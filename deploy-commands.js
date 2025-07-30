@@ -3,6 +3,10 @@ const path = require('node:path');
 const { REST, Routes } = require('discord.js');
 require('dotenv').config();
 
+const token = process.env.DISCORD_TOKEN;
+const clientId = process.env.CLIENT_ID;
+const guildId = process.env.GUILD_ID;
+
 const commands = [];
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
