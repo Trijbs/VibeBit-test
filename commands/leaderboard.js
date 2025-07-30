@@ -24,14 +24,14 @@ module.exports = {
         content: sorted
           ? `🏆 Trivia Leaderboard:\n${sorted}`
           : 'The leaderboard is currently empty.',
-        flags: 64
+        ephemeral: true
       });
       return;
     } catch (error) {
       console.error('Error reading leaderboard:', error);
       await interaction.reply({
         content: '⚠️ Failed to load the leaderboard.',
-        flags: 64
+        ephemeral: true
       });
       return;
     }

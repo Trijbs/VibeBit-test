@@ -6,7 +6,8 @@ module.exports = {
     .setDescription('Send corporate DMs to all server members (Admin only)'),
   async execute(interaction) {
     if (!interaction.member.permissions.has('Administrator')) {
-      return interaction.reply({ content: '❌ You need admin permissions to use this command.', flags: 64 });
+      await interaction.reply({ content: '❌ You need admin permissions to use this command.', flags: 64 });
+      return;
     }
 
     const members = await interaction.guild.members.fetch();

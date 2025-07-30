@@ -143,7 +143,12 @@ async function execute(interaction) {
 
   collector.on('end', async (collected, reason) => {
     if (reason !== 'both-selected') {
-      return interaction.followUp('⏰ Selection timed out. Please try again.');
+      try {
+        await interaction.followUp({ content: '⏰ Selection timed out. Please try again.' });
+      } catch (err) {
+        console.error('FollowUp error after selection timeout:', err);
+      }
+      return;
     }
 
     let opentdbCategory = null;
@@ -152,7 +157,11 @@ async function execute(interaction) {
 
     if (opentdbCategory) {
       const url = `https://opentdb.com/api.php?amount=1&type=multiple&category=${opentdbCategory}&difficulty=${selectedDifficulty}`;
-      await interaction.followUp({ content: '📡 Fetching trivia question...' });
+      try {
+        await interaction.followUp({ content: '📡 Fetching trivia question...' });
+      } catch (err) {
+        console.error('FollowUp error while fetching question:', err);
+      }
 
       const controller = new AbortController();
       const timeout = setTimeout(() => controller.abort(), 5000);
@@ -228,11 +237,19 @@ async function execute(interaction) {
 
       answerCollector.on('end', async (_, reason) => {
         if (reason === 'time') {
-          await interaction.followUp('⏰ Time ran out for answering!');
+          try {
+            await interaction.followUp('⏰ Time ran out for answering!');
+          } catch (err) {
+            console.error('FollowUp error on answer timeout:', err);
+          }
         }
       });
     } else {
-      await interaction.followUp(`❗ The category **${selectedCategory}** is not yet supported.`);
+      try {
+        await interaction.followUp(`❗ The category **${selectedCategory}** is not yet supported.`);
+      } catch (err) {
+        console.error('FollowUp error on unsupported category:', err);
+      }
     }
   });
 }

@@ -63,7 +63,8 @@ const command = {
 
     const embed = {
       content: `🎣 **Top Fishing Leaderboard**\n\n${leaderboard}`,
-      allowedMentions: { users: [] }
+      allowedMentions: { users: [] },
+      flags: 64
     };
     if (interaction.deferred || interaction.replied) {
       await interaction.editReply(embed);

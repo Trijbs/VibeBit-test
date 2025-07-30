@@ -112,7 +112,11 @@ module.exports = {
       // Edit the original reply to avoid duplicate/conflicting replies
       await interaction.editReply(reply);
     } catch (err) {
-      await interaction.editReply('❌ An error occurred while fishing.');
+      try {
+        await interaction.editReply('❌ An error occurred while fishing.');
+      } catch (err2) {
+        console.warn('Failed to edit reply:', err2.message);
+      }
     }
   }
 };
