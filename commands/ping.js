@@ -6,7 +6,7 @@ module.exports = {
     .setDescription('Replies with Pong!'),
   async execute(interaction) {
     try {
-      await interaction.reply('Pong!');
+      await interaction.reply({ content: 'Pong!', flags: 64 });
     } catch (error) {
       console.error('Error handling /ping command:', error);
       if (!interaction.replied) {
