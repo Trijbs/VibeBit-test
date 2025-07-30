@@ -58,10 +58,19 @@ client.on('interactionCreate', async interaction => {
   if (!command) return;
 
   try {
+    // Defer the reply to prevent "Unknown interaction" error if it takes time
+    await interaction.deferReply({ ephemeral: true });
+
     await command.execute(interaction);
   } catch (error) {
     console.error(error);
-    await interaction.reply({ content: '❌ There was an error executing this command.', flags: 1 << 6 });
+
+    // Try to safely edit the deferred reply, fallback if not possible
+    if (interaction.deferred || interaction.replied) {
+      await interaction.editReply({ content: '❌ There was an error executing this command.' });
+    } else {
+      await interaction.reply({ content: '❌ There was an error executing this command.', ephemeral: true });
+    }
   }
 });
 
