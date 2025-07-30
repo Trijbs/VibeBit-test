@@ -58,20 +58,23 @@ client.on('interactionCreate', async interaction => {
   if (!command) return;
 
   try {
-    // Defer the reply to prevent "Unknown interaction" error if it takes time
-    await interaction.deferReply({ flags: 64 });
+    // Defer reply to prevent early timeout or unknown interaction errors
+    await interaction.deferReply({ ephemeral: true });
 
     await command.execute(interaction);
   } catch (error) {
-    console.error(error);
+    console.error(`Error handling /${interaction.commandName} command:`, error);
 
-    // Prevent double replies
-    if (!interaction.replied && !interaction.deferred) {
-      await interaction.reply({ content: '❌ There was an error executing this command.', flags: 64 });
-    } else if (interaction.deferred && !interaction.replied) {
-      await interaction.editReply({ content: '❌ There was an error executing this command.' });
-    } else {
-      console.warn('⚠️ Interaction was already replied to. Skipping error response.');
+    try {
+      if (!interaction.replied && !interaction.deferred) {
+        await interaction.reply({ content: '❌ There was an error executing this command.', ephemeral: true });
+      } else if (interaction.deferred && !interaction.replied) {
+        await interaction.editReply({ content: '❌ There was an error executing this command.' });
+      } else {
+        await interaction.followUp({ content: '❌ There was an error.', ephemeral: true });
+      }
+    } catch (followupError) {
+      console.error('❌ Failed to send error response:', followupError);
     }
   }
 });
