@@ -70,7 +70,8 @@ client.on('interactionCreate', async interaction => {
     // Defer reply to prevent early timeout or unknown interaction errors
     await interaction.deferReply({ flags: InteractionFlagsBits.Ephemeral });
 
-    if (interaction.replied || interaction.deferred) return;
+    // Only skip execution if a reply has already been sent
+    if (interaction.replied) return;
 
     await command.execute(interaction);
   } catch (error) {
