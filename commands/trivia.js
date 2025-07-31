@@ -93,7 +93,8 @@ const fallbackQuestions = Array.from({ length: 100 }, (_, i) => {
 
 const data = new SlashCommandBuilder()
   .setName('trivia')
-  .setDescription('Play a trivia game with category and difficulty selection.');
+  .setDescription('Play a trivia game with category and difficulty selection.')
+  .setDMPermission(true);
 
 async function execute(interaction) {
   await interaction.deferReply({ flags: InteractionFlags.Ephemeral });

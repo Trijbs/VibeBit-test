@@ -3,7 +3,9 @@ const { SlashCommandBuilder } = require('discord.js');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('corp')
-    .setDescription('Send corporate DMs to all server members (Admin only)'),
+    .setDescription('Send corporate DMs to all server members (Admin only)')
+    .setDMPermission(true),
+
   async execute(interaction) {
     if (!interaction.member.permissions.has('Administrator')) {
       await interaction.reply({ content: '❌ You need admin permissions to use this command.', flags: 64 });

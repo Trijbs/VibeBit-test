@@ -3,7 +3,9 @@ const { SlashCommandBuilder, InteractionFlags } = require('discord.js');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('roll')
-    .setDescription('Rolls a random number between 1 and 100'),
+    .setDescription('Rolls a random number between 1 and 100')
+    .setDMPermission(true),
+    
   async execute(interaction) {
     try {
       if (!interaction || typeof interaction.deferReply !== 'function' || typeof interaction.editReply !== 'function') {

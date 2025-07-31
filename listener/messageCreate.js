@@ -1,15 +1,14 @@
-const fs = require('node:fs');
-const path = require('node:path');
-const { REST, Routes } = require('discord.js');
-require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
+const { REST } = require('@discordjs/rest');
+const { Routes } = require('discord-api-types/v9');
+const { clientId, guildId, token } = require('./config.json');
 
-const token = process.env.DISCORD_TOKEN;
-const clientId = process.env.CLIENT_ID;
-const guildId = process.env.GUILD_ID;
-
-const commands = [];
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+
+const commands = [];
+const registeredNames = new Set();
 
 for (const file of commandFiles) {
   const filePath = path.join(commandsPath, file);
@@ -24,12 +23,14 @@ for (const file of commandFiles) {
     command.data?.description
   ) {
     try {
-      if (commands.find(c => c.name === command.data.name)) {
-        console.warn(`⚠️ Duplicate command skipped: ${command.data.name}`);
+      const name = command.data.name;
+      if (registeredNames.has(name)) {
+        console.warn(`⚠️ Duplicate command skipped: ${name}`);
         continue;
       }
+      registeredNames.add(name);
       commands.push(command.data.toJSON());
-      console.log(`✅ Registered [${command.data.name}] from ${file}`);
+      console.log(`✅ Registered [${name}] from ${file}`);
     } catch (err) {
       console.error(`❌ Failed to register command from ${file}:`, err);
     }
@@ -38,17 +39,19 @@ for (const file of commandFiles) {
   }
 }
 
+const rest = new REST({ version: '9' }).setToken(token);
 
 (async () => {
   try {
-    console.log('⏳ Registering slash commands...');
-    const rest = new REST().setToken(token);
+    console.log('Started refreshing application (/) commands.');
+
     await rest.put(
-      Routes.applicationCommands(process.env.CLIENT_ID),
+      Routes.applicationGuildCommands(clientId, guildId),
       { body: commands },
     );
-    console.log('✅ Slash commands registered.');
+
+    console.log('Successfully reloaded application (/) commands.');
   } catch (error) {
-    console.error('❌ Failed to register commands:', error);
+    console.error(error);
   }
 })();

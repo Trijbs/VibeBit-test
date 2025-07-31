@@ -37,7 +37,9 @@ function getOrInitUserData(guildId, userId, store) {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('fish')
-    .setDescription('Catch a fish and earn XP!'),
+    .setDescription('Catch a fish and earn XP!')
+    .setDMPermission(true),
+
   async execute(interaction) {
     await interaction.deferReply({ flags: 1 << 6 });
 

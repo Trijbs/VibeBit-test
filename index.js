@@ -1,10 +1,19 @@
 require('dotenv').config();
+const OpenAI = require('openai');
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const fs = require('fs');
 const { Client, GatewayIntentBits, Collection, InteractionType, InteractionFlagsBits } = require('discord.js');
+const { logErrorToChannel } = require('./lib/logErrorToChannel');
 const token = process.env.DISCORD_TOKEN;
 
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds]
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildMessageReactions
+  ],
+  partials: ['CHANNEL'] // optional: allows handling DMs
 });
 
 client.commands = new Collection();
@@ -66,6 +75,7 @@ client.on('interactionCreate', async interaction => {
     await command.execute(interaction);
   } catch (error) {
     console.error(`Error handling /${interaction.commandName} command:`, error);
+    await logErrorToChannel(client, `❌ Error in /${interaction.commandName}:\n${error.stack || error.message}`);
     try {
       if (!interaction.replied && !interaction.deferred) {
         await interaction.reply({
@@ -77,8 +87,12 @@ client.on('interactionCreate', async interaction => {
       }
     } catch (err) {
       console.error('❌ Failed to send error response: Interaction already acknowledged.');
+      await logErrorToChannel(client, `❌ Failed to send error reply:\n${err.stack || err.message}`);
     }
   }
 });
+
+const messageHandler = require('./listeners/messageCreate');
+client.on('messageCreate', msg => messageHandler.execute(msg, client));
 
 client.login(token);
