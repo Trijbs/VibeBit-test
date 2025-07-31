@@ -1,38 +1,10 @@
 const { loadXPData, saveXPData } = require('../data/fish_xp.js');
 const { SlashCommandBuilder } = require('discord.js');
-const fs = require('fs');
-const path = require('path');
-
-const dataFile = path.join(__dirname, '../data/fish_data.json');
-const defaultData = { users: {} };
-
-function loadData() {
-  try {
-    const raw = fs.readFileSync(dataFile);
-    return JSON.parse(raw);
-  } catch (err) {
-    fs.mkdirSync(path.dirname(dataFile), { recursive: true });
-    fs.writeFileSync(dataFile, JSON.stringify(defaultData, null, 2));
-    return defaultData;
-  }
-}
-
-function saveData(data) {
-  fs.writeFileSync(dataFile, JSON.stringify(data, null, 2));
-}
-
-function getOrInitUserData(guildId, userId, store) {
-  if (!store[guildId]) store[guildId] = {};
-  if (!store[guildId][userId]) {
-    store[guildId][userId] = {
-      xp: 0,
-      streak: 0,
-      inventory: [],
-      achievements: []
-    };
-  }
-  return store[guildId][userId];
-}
+const {
+  loadFishData,
+  saveFishData,
+  getOrInitUserData
+} = require('../data/fish_data.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -41,9 +13,9 @@ module.exports = {
   async execute(interaction) {
     await interaction.deferReply({ flags: 1 << 6 });
 
-    const fishData = loadData();
+    const fishData = loadFishData();
     const xpData = loadXPData();
-    const userData = getOrInitUserData(interaction.guild.id, interaction.user.id, fishData);
+    const userData = getOrInitUserData(interaction.guild.id, interaction.user.id);
     const now = Date.now();
     try {
       if (userData.lastFish && now - userData.lastFish < 10000) {
@@ -60,7 +32,7 @@ module.exports = {
         userData.lastFish = now;
         userData.lastCaught = null;
         fishData[interaction.guild.id][interaction.user.id] = userData;
-        saveData(fishData);
+        saveFishData(fishData);
         await interaction.editReply({ content: '😞 You didn’t catch anything this time.' });
         return;
       }
@@ -104,7 +76,7 @@ module.exports = {
       }
 
       fishData[interaction.guild.id][interaction.user.id] = userData;
-      saveData(fishData);
+      saveFishData(fishData);
 
       let reply = `🎣 You caught a ${fishType} and earned **${xpGain} XP**!\n🔥 Streak: ${userData.streak}`;
       if (bonus > 0) reply += ` (+${bonus} bonus XP)`;
