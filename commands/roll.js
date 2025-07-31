@@ -13,8 +13,6 @@ module.exports = {
         return;
       }
 
-      await interaction.deferReply({ flags: 64 });
-
       const roll = Math.floor(Math.random() * 100) + 1;
       await interaction.editReply(`🎲 You rolled a **${roll}**!`);
     } catch (error) {

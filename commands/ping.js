@@ -8,7 +8,6 @@ module.exports = {
 
   async execute(interaction) {
     try {
-      await interaction.deferReply({ flags: 64 }); // 64 = EPHEMERAL
       const sent = await interaction.editReply({ content: 'Pinging...' });
       const pingTime = sent.createdTimestamp - interaction.createdTimestamp;
       await interaction.editReply({ content: `🏓 Pong! (Roundtrip: ${pingTime}ms)` });
