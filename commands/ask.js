@@ -22,10 +22,18 @@ module.exports = {
       });
 
       const reply = response.choices[0].message.content;
-      await interaction.editReply({ content: reply });
+      if (!interaction.replied && !interaction.deferred) {
+        await interaction.reply({ content: reply });
+      } else {
+        await interaction.editReply({ content: reply });
+      }
     } catch (err) {
       console.error('GPT error:', err);
-      await interaction.editReply({ content: '❌ Failed to get response from OpenAI.' });
+      if (!interaction.replied && !interaction.deferred) {
+        await interaction.reply({ content: '❌ Failed to get response from OpenAI.' });
+      } else {
+        await interaction.editReply({ content: '❌ Failed to get response from OpenAI.' });
+      }
     }
   },
 };
