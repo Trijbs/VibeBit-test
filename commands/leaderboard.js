@@ -1,11 +1,41 @@
 const { SlashCommandBuilder } = require('discord.js');
+const fs = require('fs');
+const path = require('path');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('ping')
-    .setDescription('Replies with Pong!'),
+    .setName('leaderboard')
+    .setDescription('Shows the current trivia leaderboard.'),
+
   async execute(interaction) {
-    await interaction.deferReply({ flags: 1 << 6 }); // Ephemeral using flags
-    await interaction.editReply('🏓 Pong!');
+    await interaction.deferReply({ flags: 1 << 6 });
+
+    const dataPath = path.join(__dirname, '../leaderboard.json');
+    let data = {};
+    try {
+      data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+    } catch (err) {
+      console.error('Failed to read leaderboard data:', err);
+      await interaction.editReply('⚠️ Failed to load leaderboard.');
+      return;
+    }
+
+    const sorted = Object.entries(data)
+      .sort(([, a], [, b]) => b.score - a.score)
+      .slice(0, 10);
+
+    if (sorted.length === 0) {
+      await interaction.editReply('📭 Leaderboard is empty.');
+      return;
+    }
+
+    const board = sorted
+      .map(([id, entry], i) => `**${i + 1}.** <@${id}> — ${entry.score}`)
+      .join('\n');
+
+    await interaction.editReply({
+      content: `📊 **Leaderboard**\n\n${board}`,
+      allowedMentions: { users: [] }
+    });
   },
 };
