@@ -55,5 +55,15 @@ module.exports = {
     } catch (err) {
       console.error('Error writing member data:', err);
     }
+
+    // Attempt to assign the "᭼ Fusionist" role to the new member
+    const fusionistRole = member.guild.roles.cache.find(role => role.name === '᭼ Fusionist');
+    if (fusionistRole) {
+      try {
+        await member.roles.add(fusionistRole);
+      } catch (err) {
+        console.error(`Failed to assign Fusionist role to ${member.user.tag}:`, err);
+      }
+    }
   },
 };
