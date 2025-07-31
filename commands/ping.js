@@ -3,7 +3,9 @@ const { SlashCommandBuilder, InteractionFlags } = require('discord.js');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('ping')
-    .setDescription('Replies with Pong!'),
+    .setDescription('Replies with Pong!')
+    .setDMPermission(true),
+
   async execute(interaction) {
     try {
       await interaction.deferReply({ flags: InteractionFlags.Ephemeral }); // ephemeral response

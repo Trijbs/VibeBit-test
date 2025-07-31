@@ -5,7 +5,8 @@ const fs = require('fs');
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('fish-achievements')
-    .setDescription('🎖️ View your fishing achievements!'),
+    .setDescription('🎖️ View your fishing achievements!')
+    .setDMPermission(true),
 
   async execute(interaction) {
     const userId = interaction.user.id;

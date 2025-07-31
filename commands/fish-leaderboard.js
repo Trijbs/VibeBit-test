@@ -18,7 +18,8 @@ function ensureUserEntry(data, guildId, userId) {
 const command = {
   data: new SlashCommandBuilder()
     .setName('fish-leaderboard')
-    .setDescription('🎣 Shows the top fishing players based on XP.'),
+    .setDescription('🎣 Shows the top fishing players based on XP.')
+    .setDMPermission(true),
 
   async execute(interaction) {
     await interaction.deferReply({ flags: 1 << 6 });

@@ -20,6 +20,7 @@ module.exports = {
       return;
     }
 
+    const data = require('../leaderboard.json');
     const sorted = Object.entries(data)
       .sort(([, a], [, b]) => b.score - a.score)
       .slice(0, 10);
@@ -37,5 +38,11 @@ module.exports = {
       content: `📊 **Leaderboard**\n\n${board}`,
       allowedMentions: { users: [] }
     });
+      await interaction.editReply('📭 No leaderboard data.');
+      return;
+    }
+
+    const lines = sorted.map(([id, info], i) => `**${i + 1}.** <@${id}> — ${info.score}`);
+    await interaction.editReply(lines.join('\n'));
   },
 };
