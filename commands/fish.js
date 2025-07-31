@@ -13,7 +13,6 @@ module.exports = {
     .setDMPermission(true),
 
   async execute(interaction) {
-    await interaction.deferReply({ flags: 1 << 6 });
 
     const fishData = loadFishData();
     const xpData = loadXPData();
