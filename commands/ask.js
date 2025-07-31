@@ -28,6 +28,14 @@ module.exports = {
         await interaction.editReply({ content: reply });
       }
     } catch (err) {
+      if (err.status === 429 || err?.error?.code === 'insufficient_quota') {
+        const msg = '🚫 Je GPT-quota is op. Bekijk je usage op https://platform.openai.com/account/usage.';
+        if (!interaction.replied && !interaction.deferred) {
+          return await interaction.reply({ content: msg });
+        } else {
+          return await interaction.editReply({ content: msg });
+        }
+      }
       console.error('GPT error:', err);
       if (!interaction.replied && !interaction.deferred) {
         await interaction.reply({ content: '❌ Failed to get response from OpenAI.' });
