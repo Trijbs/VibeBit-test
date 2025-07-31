@@ -2,18 +2,15 @@ require('dotenv').config();
 const OpenAI = require('openai');
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const fs = require('fs');
-const { Client, GatewayIntentBits, Collection, InteractionType, InteractionFlagsBits } = require('discord.js');
-const { logErrorToChannel } = require('./lib/logErrorToChannel');
+const { Client, GatewayIntentBits, Collection, InteractionType } = require('discord.js');
+const logErrorToChannel = require('./lib/logErrorToChannel');
 const token = process.env.DISCORD_TOKEN;
 
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-    GatewayIntentBits.GuildMessageReactions
-  ],
-  partials: ['CHANNEL'] // optional: allows handling DMs
+    GatewayIntentBits.GuildMessages
+  ]
 });
 
 client.commands = new Collection();
@@ -66,9 +63,12 @@ client.on('interactionCreate', async interaction => {
   const command = client.commands.get(interaction.commandName);
   if (!command) return;
 
+  // 64 is the value for ephemeral flag in Discord API
+  const EPHEMERAL_FLAG = 64;
+
   try {
     // Defer reply to prevent early timeout or unknown interaction errors
-    await interaction.deferReply({ flags: InteractionFlagsBits.Ephemeral });
+    await interaction.deferReply({ flags: EPHEMERAL_FLAG });
 
     // Only skip execution if a reply has already been sent
     if (interaction.replied) return;
@@ -81,7 +81,7 @@ client.on('interactionCreate', async interaction => {
       if (!interaction.replied && !interaction.deferred) {
         await interaction.reply({
           content: '❌ There was an error executing this command.',
-          flags: InteractionFlagsBits.Ephemeral
+          flags: EPHEMERAL_FLAG
         });
       } else {
         console.error('❌ Failed to send error response: Interaction already acknowledged.');
