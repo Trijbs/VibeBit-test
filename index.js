@@ -96,4 +96,7 @@ client.on('interactionCreate', async interaction => {
 const messageHandler = require('./listeners/messageCreate');
 client.on('messageCreate', msg => messageHandler.execute(msg, client));
 
+const guildMemberAddHandler = require('./listeners/guildMemberAdd');
+client.on('guildMemberAdd', member => guildMemberAddHandler.execute(member));
+
 client.login(token);
