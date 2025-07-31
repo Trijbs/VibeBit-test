@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, InteractionFlags } = require('discord.js');
+const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -8,7 +8,7 @@ module.exports = {
 
   async execute(interaction) {
     try {
-      await interaction.deferReply({ flags: InteractionFlags.Ephemeral }); // ephemeral response
+      await interaction.deferReply({ flags: 64 }); // 64 = EPHEMERAL
       const sent = await interaction.editReply({ content: 'Pinging...' });
       const pingTime = sent.createdTimestamp - interaction.createdTimestamp;
       await interaction.editReply({ content: `🏓 Pong! (Roundtrip: ${pingTime}ms)` });

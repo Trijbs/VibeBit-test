@@ -13,7 +13,6 @@ module.exports = {
   async execute(interaction) {
     const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY }); // ✅ alleen hier gebruiken
 
-    await interaction.deferReply({ ephemeral: true });
     const input = interaction.options.getString('prompt');
 
     try {

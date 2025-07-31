@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, InteractionFlags } = require('discord.js');
+const { SlashCommandBuilder } = require('discord.js');
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -13,14 +13,14 @@ module.exports = {
         return;
       }
 
-      await interaction.deferReply({ flags: InteractionFlags.Ephemeral });
+      await interaction.deferReply({ flags: 64 });
 
       const roll = Math.floor(Math.random() * 100) + 1;
       await interaction.editReply(`🎲 You rolled a **${roll}**!`);
     } catch (error) {
       console.error('Error executing /roll command:', error);
       if (interaction && interaction.editReply) {
-        await interaction.followUp({ content: '❌ Something went wrong while rolling the dice.', flags: InteractionFlags.Ephemeral });
+        await interaction.followUp({ content: '❌ Something went wrong while rolling the dice.', flags: 64 });
       }
     }
   },
