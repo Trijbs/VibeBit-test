@@ -25,7 +25,8 @@ module.exports = {
         });
       } catch (err) {
         console.error('Failed to create welcome channel:', err);
-        return;
+        welcomeChannel = member.guild.channels.cache.get('1400279407247229110');
+        if (!welcomeChannel) return;
       }
     }
 

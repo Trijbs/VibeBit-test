@@ -43,10 +43,11 @@ for (const file of commandFiles) {
   try {
     console.log('⏳ Registering slash commands...');
     const rest = new REST().setToken(token);
-    await rest.put(
-      Routes.applicationCommands(process.env.CLIENT_ID),
-      { body: commands },
-    );
+    const route = guildId
+      ? Routes.applicationGuildCommands(clientId, guildId)
+      : Routes.applicationCommands(clientId);
+
+    await rest.put(route, { body: commands });
     console.log('✅ Slash commands registered.');
   } catch (error) {
     console.error('❌ Failed to register commands:', error);
