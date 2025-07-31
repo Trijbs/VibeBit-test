@@ -96,7 +96,6 @@ const data = new SlashCommandBuilder()
   .setDMPermission(true);
 
 async function execute(interaction) {
-  await interaction.deferReply({ flags: 64 });
 
   const categoryRow = new ActionRowBuilder().addComponents(
     new ButtonBuilder().setCustomId('scientific').setLabel('Scientific').setStyle(ButtonStyle.Primary),
