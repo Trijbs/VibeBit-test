@@ -12,9 +12,12 @@ module.exports = {
       return;
     }
 
-    const members = await interaction.guild.members.fetch();
-    let sentCount = 0;
+    await interaction.editReply({ content: '📡 Fetching members and preparing DMs...' });
 
+    let members;
+    members = interaction.guild.members.cache;
+
+    let sentCount = 0;
     for (const [id, member] of members) {
       if (member.user.bot) continue;
       try {
@@ -25,6 +28,6 @@ module.exports = {
       }
     }
 
-    await interaction.reply({ content: `✅ Sent corporate message to ${sentCount} members.`, flags: 64 });
+    await interaction.editReply({ content: `✅ Sent corporate message to ${sentCount} members.` });
   }
 };
