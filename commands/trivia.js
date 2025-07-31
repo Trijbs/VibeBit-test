@@ -97,6 +97,8 @@ const data = new SlashCommandBuilder()
 
 async function execute(interaction) {
 
+  // Removed: await interaction.deferReply({ flags: 64 }); // Already deferred in index.js
+
   const categoryRow = new ActionRowBuilder().addComponents(
     new ButtonBuilder().setCustomId('scientific').setLabel('Scientific').setStyle(ButtonStyle.Primary),
     new ButtonBuilder().setCustomId('history').setLabel('History').setStyle(ButtonStyle.Primary),
