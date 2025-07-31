@@ -4,10 +4,22 @@ const path = require('path');
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName('ping')
-    .setDescription('Replies with Pong!'),
+    .setName('leaderboard')
+    .setDescription('Show top trivia players'),
+
   async execute(interaction) {
     await interaction.deferReply({ flags: 1 << 6 });
+
+    const dataPath = path.join(__dirname, '..', 'leaderboard.json');
+    let data = {};
+    try {
+      data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+    } catch (err) {
+      console.error('Failed to read leaderboard data:', err);
+      await interaction.editReply('⚠️ Failed to load leaderboard.');
+      return;
+    }
+
     const data = require('../leaderboard.json');
     const sorted = Object.entries(data)
       .sort(([, a], [, b]) => b.score - a.score)
