@@ -1,32 +1,32 @@
 const { SlashCommandBuilder } = require('discord.js');
 const OpenAI = require('openai');
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 module.exports = {
-    data: new SlashCommandBuilder()
+  data: new SlashCommandBuilder()
     .setName('ask')
-    .setDescription('Ask something to GPT')
-    .setDMPermission(true), // ✅ belangrijk
+    .setDescription('Ask a question to OpenAI')
+    .addStringOption(option =>
+      option.setName('prompt')
+        .setDescription('Your prompt for GPT')
+        .setRequired(true)),
 
-        
   async execute(interaction) {
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY }); // ✅ alleen hier gebruiken
+
     await interaction.deferReply({ ephemeral: true });
     const input = interaction.options.getString('prompt');
 
     try {
-      const chatCompletion = await openai.chat.completions.create({
+      const response = await openai.chat.completions.create({
         model: 'gpt-4o',
         messages: [{ role: 'user', content: input }],
       });
 
-      const reply = chatCompletion.choices[0].message.content;
+      const reply = response.choices[0].message.content;
       await interaction.editReply({ content: reply });
-    } catch (error) {
-      console.error('❌ OpenAI API error:', error);
-      await interaction.editReply({ content: '❌ Failed to get a response from OpenAI.' });
+    } catch (err) {
+      console.error('GPT error:', err);
+      await interaction.editReply({ content: '❌ Failed to get response from OpenAI.' });
     }
   },
 };
