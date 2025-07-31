@@ -1,57 +1,51 @@
-const fs = require('fs');
-const path = require('path');
-const { REST } = require('@discordjs/rest');
-const { Routes } = require('discord-api-types/v9');
-const { clientId, guildId, token } = require('./config.json');
+const OpenAI = require('openai');
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-const commandsPath = path.join(__dirname, 'commands');
-const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+module.exports = {
+  name: 'messageCreate',
+  async execute(message, client) {
+    if (message.author.bot) return;
 
-const commands = [];
-const registeredNames = new Set();
-
-for (const file of commandFiles) {
-  const filePath = path.join(commandsPath, file);
-  const command = require(filePath);
-
-  if (
-    command &&
-    typeof command === 'object' &&
-    'data' in command &&
-    'execute' in command &&
-    command.data?.name &&
-    command.data?.description
-  ) {
     try {
-      const name = command.data.name;
-      if (registeredNames.has(name)) {
-        console.warn(`⚠️ Duplicate command skipped: ${name}`);
-        continue;
+      const response = await openai.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [
+          {
+            role: 'system',
+            content: 'Je bent een moderatorbot. Label alleen berichten als ongepast als ze beledigend, gewelddadig of haatdragend zijn. Antwoord alleen met "ongepast" of "ok".'
+          },
+          { role: 'user', content: message.content }
+        ],
+        max_tokens: 1
+      });
+
+      const result = response.choices[0].message.content.toLowerCase().trim();
+      if (result === 'ongepast') {
+        await message.reply('⚠️ Dit bericht kan in strijd zijn met de richtlijnen.');
+        return;
       }
-      registeredNames.add(name);
-      commands.push(command.data.toJSON());
-      console.log(`✅ Registered [${name}] from ${file}`);
     } catch (err) {
-      console.error(`❌ Failed to register command from ${file}:`, err);
+      console.warn('AI moderatie mislukt:', err.message);
     }
-  } else {
-    console.warn(`⚠️ Skipping invalid command in ${file}: missing "data" or "execute" export`);
+
+    const lower = message.content.toLowerCase();
+
+    if (message.channel.type === 1) {
+      await message.channel.send(`👋 Hi ${message.author.username}, I'm your friendly bot!`);
+      return;
+    }
+
+    if (message.channel.isThread() && lower.includes('gpt')) {
+      await message.channel.send(`🧠 I'm listening...`);
+      return;
+    }
+
+    if (lower.includes('bot help')) {
+      await message.reply('🤖 Need help? Try using `/commands` or `/ping`!');
+    }
+
+    if (lower.includes('fish') || lower.includes('catch')) {
+      await message.react('🎣');
+    }
   }
-}
-
-const rest = new REST({ version: '9' }).setToken(token);
-
-(async () => {
-  try {
-    console.log('Started refreshing application (/) commands.');
-
-    await rest.put(
-      Routes.applicationGuildCommands(clientId, guildId),
-      { body: commands },
-    );
-
-    console.log('Successfully reloaded application (/) commands.');
-  } catch (error) {
-    console.error(error);
-  }
-})();
+};
