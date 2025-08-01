@@ -12,23 +12,31 @@ module.exports = {
     const userId = interaction.user.id;
     const guildId = interaction.guildId;
 
-    await interaction.deferReply({ flags: 1 << 6 });
+    if (!interaction.deferred && !interaction.replied) {
+      await interaction.deferReply({ flags: 1 << 6 });
+    }
 
     const userData = getUserData(guildId, userId);
 
     if (!userData) {
-      await interaction.editReply({ content: "You haven't caught any fish yet!" });
+      if (!interaction.replied) {
+        await interaction.editReply({ content: "You haven't caught any fish yet!" });
+      }
       return;
     }
 
     const achievements = userData.achievements || [];
     if (achievements.length === 0) {
-      await interaction.editReply({ content: "You don't have any achievements yet!" });
+      if (!interaction.replied) {
+        await interaction.editReply({ content: "You don't have any achievements yet!" });
+      }
       return;
     }
 
     const achievementList = achievements.map(a => `🏆 ${a}`).join('\n');
 
-    await interaction.editReply({ content: `Here are your achievements:\n${achievementList}` });
+    if (!interaction.replied) {
+      await interaction.editReply({ content: `Here are your achievements:\n${achievementList}` });
+    }
   }
 };

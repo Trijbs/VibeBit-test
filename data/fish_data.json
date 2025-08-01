@@ -17,13 +17,22 @@
   },
   "1390512546858926163": {
     "885947418292650005": {
-      "xp": 35,
-      "streak": 0,
+      "xp": 40,
+      "streak": 1,
       "inventory": [],
       "achievements": [],
-      "lastFish": 1753971928783,
-      "lastCaught": null,
+      "lastFish": 1753989479247,
+      "lastCaught": "🐬 Dolphin",
       "username": "_tribs_"
+    },
+    "1374923131931721839": {
+      "xp": 20,
+      "streak": 2,
+      "inventory": [],
+      "achievements": [],
+      "lastFish": 1754074606510,
+      "lastCaught": "👟 Trash Shoe",
+      "username": "ribz_."
     }
   }
 }
