@@ -35,12 +35,14 @@
       "username": "ribz_."
     },
     "1400140375930441758": {
-      "xp": 40,
-      "streak": 2,
+      "xp": 1708,
+      "streak": 0,
       "inventory": [],
-      "achievements": [],
-      "lastFish": 1754075184506,
-      "lastCaught": "🐡 Pufferfish",
+      "achievements": [
+        "Beginner Angler"
+      ],
+      "lastFish": 1754079948698,
+      "lastCaught": null,
       "username": "VibeBit Test"
     }
   }

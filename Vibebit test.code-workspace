@@ -1,13 +1,11 @@
 {
 	"folders": [
 		{
-			"name": "Vibebit test",
-			"path": "../Vibebit test"
-		},
-		{
 			"name": "Vibebit_test",
 			"path": "."
 		}
 	],
-	"settings": {}
+	"settings": {
+		"CodeGPT.apiKey": "Anthropic"
+	}
 }
